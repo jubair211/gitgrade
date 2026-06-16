@@ -48,17 +48,25 @@ gitgrade milestones .
 ```
 
 ## Example Output
+
 === GitGrade Habits ===
+
 Days coded this week : 5
 Verdict : Great job! You coded 5 days this week.
+
 === GitGrade Patterns ===
+
 Most active hour : 21:00
 Verdict : You code mostly at night. Try morning sessions for better focus.
+
 === GitGrade Milestones ===
+
 Total commits : 10
 Active coding days : 8
 Current streak : 3 day(s)
 Milestone : 10 commits total - keep going!
+
+
 ## Business Model
 
 **Free**
