@@ -4,7 +4,7 @@ mod analyzer;
 
 #[derive(Parser)]
 #[command(name = "gitgrade")]
-#[command(about = "Automatic git activity analyzer for students")]
+#[command(about = "Coding habit tracker for 1st and 2nd semester Health Informatics students")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -14,17 +14,26 @@ struct Cli {
 enum Commands {
     /// Scan a git repository and show your activity
     Scan {
-        /// Path to the git repo (default: current directory)
         #[arg(default_value = ".")]
         path: String,
     },
-    /// Show your coding streak
-    Streak {
+    /// Show your coding habits and consistency
+    Habits {
         #[arg(default_value = ".")]
         path: String,
     },
-    /// Show commits per day this week
-    Weekly {
+    /// Show your progress since week 1
+    Progress {
+        #[arg(default_value = ".")]
+        path: String,
+    },
+    /// Show your coding time patterns
+    Patterns {
+        #[arg(default_value = ".")]
+        path: String,
+    },
+    /// Show your beginner milestones
+    Milestones {
         #[arg(default_value = ".")]
         path: String,
     },
@@ -35,7 +44,9 @@ fn main() {
 
     match cli.command {
         Commands::Scan { path } => analyzer::scan(&path),
-        Commands::Streak { path } => analyzer::streak(&path),
-        Commands::Weekly { path } => analyzer::weekly(&path),
+        Commands::Habits { path } => analyzer::habits(&path),
+        Commands::Progress { path } => analyzer::progress(&path),
+        Commands::Patterns { path } => analyzer::patterns(&path),
+        Commands::Milestones { path } => analyzer::milestones(&path),
     }
 }

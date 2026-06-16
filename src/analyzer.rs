@@ -1,132 +1,202 @@
 use git2::Repository;
-use chrono::{DateTime, Local, Datelike, Timelike};
+use chrono::{DateTime, Local, Timelike};
 use std::collections::HashMap;
 
-pub fn scan(path: &str) {
-    let repo = match Repository::open(path) {
-        Ok(r) => r,
+fn open_repo(path: &str) -> Option<Repository> {
+    match Repository::open(path) {
+        Ok(r) => Some(r),
         Err(_) => {
             eprintln!("Error: not a git repository: {}", path);
-            return;
-        }
-    };
-
-    let mut revwalk = repo.revwalk().unwrap();
-    revwalk.push_head().unwrap();
-
-    let mut commits_per_hour: HashMap<u32, u32> = HashMap::new();
-    let mut total_commits = 0;
-    let mut peak_hour = 0;
-    let mut peak_count = 0;
-
-    for oid in revwalk.flatten() {
-        let commit = repo.find_commit(oid).unwrap();
-        let time = commit.time().seconds();
-        let dt: DateTime<Local> = DateTime::from_timestamp(time, 0)
-            .unwrap()
-            .with_timezone(&Local);
-
-        let hour = dt.hour();
-        let count = commits_per_hour.entry(hour).or_insert(0);
-        *count += 1;
-        total_commits += 1;
-
-        if *count > peak_count {
-            peak_count = *count;
-            peak_hour = hour;
+            None
         }
     }
-
-    println!("=== GitGrade Scan: {} ===", path);
-    println!("Total commits:   {}", total_commits);
-    println!("Peak coding hour: {:02}:00 - {:02}:00", peak_hour, peak_hour + 1);
-    println!("Commits at peak hour: {}", peak_count);
 }
 
-pub fn streak(path: &str) {
-    let repo = match Repository::open(path) {
-        Ok(r) => r,
-        Err(_) => {
-            eprintln!("Error: not a git repository: {}", path);
-            return;
-        }
-    };
-
+fn get_commits(repo: &Repository) -> Vec<DateTime<Local>> {
     let mut revwalk = repo.revwalk().unwrap();
     revwalk.push_head().unwrap();
-
-    let mut days: Vec<chrono::NaiveDate> = vec![];
-
+    let mut dates = vec![];
     for oid in revwalk.flatten() {
-        let commit = repo.find_commit(oid).unwrap();
-        let time = commit.time().seconds();
-        let dt: DateTime<Local> = DateTime::from_timestamp(time, 0)
-            .unwrap()
-            .with_timezone(&Local);
-        let date = dt.date_naive();
-        if !days.contains(&date) {
-            days.push(date);
+        if let Ok(commit) = repo.find_commit(oid) {
+            let time = commit.time().seconds();
+            if let Some(dt) = DateTime::from_timestamp(time, 0) {
+                dates.push(dt.with_timezone(&Local));
+            }
+        }
+    }
+    dates
+}
+
+pub fn scan(path: &str) {
+    let repo = match open_repo(path) { Some(r) => r, None => return };
+    let commits = get_commits(&repo);
+
+    let total = commits.len();
+    let mut hours: HashMap<u32, u32> = HashMap::new();
+    for dt in &commits {
+        *hours.entry(dt.hour()).or_insert(0) += 1;
+    }
+    let peak_hour = hours.iter().max_by_key(|e| e.1).map(|(h, _)| *h).unwrap_or(0);
+
+    println!("=== GitGrade Scan: {} ===", path);
+    println!("Total commits    : {}", total);
+    println!("Peak coding hour : {:02}:00 - {:02}:00", peak_hour, peak_hour + 1);
+
+    if total >= 10 {
+        println!("Milestone        : {} commits total - keep going!", total);
+    } else {
+        println!("Milestone        : {} commits so far - {} more to reach 10!", total, 10 - total);
+    }
+}
+
+pub fn habits(path: &str) {
+    let repo = match open_repo(path) { Some(r) => r, None => return };
+    let commits = get_commits(&repo);
+
+    let now = Local::now();
+    let mut days_this_week = std::collections::HashSet::new();
+    let mut last_day = None;
+    let mut crammer = false;
+
+    for dt in &commits {
+        let days_ago = (now.date_naive() - dt.date_naive()).num_days();
+        if days_ago <= 7 {
+            days_this_week.insert(dt.date_naive());
+        }
+        if days_ago <= 1 {
+            if let Some(prev) = last_day {
+                if prev == dt.date_naive() {
+                    crammer = true;
+                }
+            }
+            last_day = Some(dt.date_naive());
         }
     }
 
-    days.sort();
-    days.reverse();
+    let days_count = days_this_week.len();
+
+    println!("=== GitGrade Habits ===");
+    println!("Days coded this week : {}", days_count);
+
+    if days_count >= 5 {
+        println!("Verdict              : Great job! You coded {} days this week.", days_count);
+    } else if days_count >= 3 {
+        println!("Verdict              : Good effort! Try to code at least 5 days a week.");
+    } else if days_count == 1 && crammer {
+        println!("Verdict              : Warning: You only committed on deadline day. Try spreading your work.");
+    } else {
+        println!("Verdict              : Only {} day(s) this week. Consistency is key for beginners!", days_count);
+    }
+}
+
+pub fn progress(path: &str) {
+    let repo = match open_repo(path) { Some(r) => r, None => return };
+    let commits = get_commits(&repo);
+
+    if commits.is_empty() {
+        println!("No commits found.");
+        return;
+    }
+
+    let now = Local::now();
+    let mut week1: u32 = 0;
+    let mut this_week: u32 = 0;
+    let oldest = commits.iter().min_by_key(|d| d.timestamp()).unwrap();
+    let first_week_end = *oldest + chrono::Duration::days(7);
+
+    for dt in &commits {
+        let days_ago = (now.date_naive() - dt.date_naive()).num_days();
+        if days_ago <= 7 {
+            this_week += 1;
+        }
+        if *dt <= first_week_end {
+            week1 += 1;
+        }
+    }
+
+    println!("=== GitGrade Progress ===");
+    println!("First week commits   : {}", week1);
+    println!("This week commits    : {}", this_week);
+
+    if week1 > 0 && this_week > week1 {
+        let growth = this_week / week1;
+        if growth >= 2 {
+            println!("Verdict              : Your commits grew {}x since week 1. Keep it up!", growth);
+        } else {
+            println!("Verdict              : You are committing more than week 1. Good progress!");
+        }
+    } else if week1 == 0 {
+        println!("Verdict              : Not enough history yet. Keep coding!");
+    } else {
+        println!("Verdict              : Try to commit more than your first week!");
+    }
+}
+
+pub fn patterns(path: &str) {
+    let repo = match open_repo(path) { Some(r) => r, None => return };
+    let commits = get_commits(&repo);
+
+    let mut hours: HashMap<u32, u32> = HashMap::new();
+    for dt in &commits {
+        *hours.entry(dt.hour()).or_insert(0) += 1;
+    }
+
+    let peak_hour = hours.iter().max_by_key(|e| e.1).map(|(h, _)| *h).unwrap_or(0);
+
+    println!("=== GitGrade Patterns ===");
+    println!("Most active hour     : {:02}:00", peak_hour);
+
+    if peak_hour >= 22 || peak_hour < 4 {
+        println!("Verdict              : You code mostly at night. Try morning sessions for better focus.");
+    } else if peak_hour >= 6 && peak_hour <= 12 {
+        println!("Verdict              : Great! Morning coding builds strong habits.");
+    } else if peak_hour >= 13 && peak_hour <= 17 {
+        println!("Verdict              : Afternoon coder - solid and consistent.");
+    } else {
+        println!("Verdict              : Evening coder - just make sure you get enough sleep!");
+    }
+}
+
+pub fn milestones(path: &str) {
+    let repo = match open_repo(path) { Some(r) => r, None => return };
+    let commits = get_commits(&repo);
+
+    let total = commits.len();
+    let now = Local::now();
+    let mut days_active = std::collections::HashSet::new();
+    for dt in &commits {
+        days_active.insert(dt.date_naive());
+    }
 
     let mut streak = 0;
-    let mut prev = Local::now().date_naive();
-
-    for day in &days {
-        let diff = (prev - *day).num_days();
-        if diff <= 1 {
+    let mut check_day = now.date_naive();
+    loop {
+        if days_active.contains(&check_day) {
             streak += 1;
-            prev = *day;
+            check_day -= chrono::Duration::days(1);
         } else {
             break;
         }
     }
 
-    println!("=== GitGrade Streak: {} ===", path);
-    println!("Current coding streak: {} day(s) 🔥", streak);
-}
+    println!("=== GitGrade Milestones ===");
+    println!("Total commits        : {}", total);
+    println!("Active coding days   : {}", days_active.len());
+    println!("Current streak       : {} day(s)", streak);
 
-pub fn weekly(path: &str) {
-    let repo = match Repository::open(path) {
-        Ok(r) => r,
-        Err(_) => {
-            eprintln!("Error: not a git repository: {}", path);
-            return;
-        }
-    };
-
-    let mut revwalk = repo.revwalk().unwrap();
-    revwalk.push_head().unwrap();
-
-    let mut commits_per_day: HashMap<String, u32> = HashMap::new();
-    let now = Local::now();
-
-    for oid in revwalk.flatten() {
-        let commit = repo.find_commit(oid).unwrap();
-        let time = commit.time().seconds();
-        let dt: DateTime<Local> = DateTime::from_timestamp(time, 0)
-            .unwrap()
-            .with_timezone(&Local);
-
-        let days_ago = (now.date_naive() - dt.date_naive()).num_days();
-        if days_ago <= 7 {
-            let label = dt.format("%a %d/%m").to_string();
-            *commits_per_day.entry(label).or_insert(0) += 1;
-        }
+    if total >= 100 {
+        println!("Milestone            : 100 commits - you are no longer a beginner!");
+    } else if total >= 50 {
+        println!("Milestone            : 50 commits - halfway to 100. Impressive!");
+    } else if total >= 10 {
+        println!("Milestone            : 10 commits total - keep going!");
+    } else {
+        println!("Milestone            : {} commits so far - {} more to reach your first milestone!", total, 10 - total);
     }
 
-    println!("=== GitGrade Weekly: {} ===", path);
-    if commits_per_day.is_empty() {
-        println!("No commits in the last 7 days.");
-    } else {
-        let mut days: Vec<(String, u32)> = commits_per_day.into_iter().collect();
-        days.sort_by(|a, b| a.0.cmp(&b.0));
-        for (day, count) in days {
-            let bar = "█".repeat(count as usize);
-            println!("{:12} | {} ({})", day, bar, count);
-        }
+    if streak >= 7 {
+        println!("Streak bonus         : 7 day streak - outstanding consistency!");
+    } else if streak >= 3 {
+        println!("Streak bonus         : {} day streak - you are building a great habit!", streak);
     }
 }

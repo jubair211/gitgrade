@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GitGrade - Coding Habit Tracker for Health Informatics Students</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; line-height: 1.7; }
+    a { color: #4ea8de; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header { background: #161b22; border-bottom: 1px solid #21262d; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.4rem; color: #58a6ff; letter-spacing: 1px; }
+    header nav a { margin-left: 1.5rem; color: #c9d1d9; font-size: 0.95rem; }
+    .hero { text-align: center; padding: 80px 2rem 60px; background: linear-gradient(180deg, #161b22 0%, #0f1117 100%); border-bottom: 1px solid #21262d; }
+    .hero h2 { font-size: 2.8rem; color: #58a6ff; margin-bottom: 1rem; line-height: 1.2; }
+    .hero p { font-size: 1.2rem; color: #8b949e; max-width: 600px; margin: 0 auto 2rem; }
+    .badge { display: inline-block; background: #21262d; border: 1px solid #30363d; color: #8b949e; font-size: 0.8rem; padding: 4px 12px; border-radius: 20px; margin-bottom: 1.5rem; }
+    .btn { display: inline-block; padding: 12px 28px; border-radius: 6px; font-size: 1rem; font-weight: 600; margin: 0.4rem; }
+    .btn-primary { background: #238636; color: #fff; border: 1px solid #2ea043; }
+    .btn-primary:hover { background: #2ea043; text-decoration: none; }
+    .btn-secondary { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+    .btn-secondary:hover { background: #30363d; text-decoration: none; }
+    .terminal { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem 2rem; max-width: 640px; margin: 2.5rem auto 0; text-align: left; font-family: monospace; font-size: 0.92rem; }
+    .terminal .prompt { color: #58a6ff; }
+    .terminal .output { color: #3fb950; }
+    section { padding: 60px 2rem; max-width: 960px; margin: 0 auto; }
+    h3 { font-size: 1.8rem; color: #e6edf3; margin-bottom: 1.5rem; }
+    .problem-box { background: #161b22; border-left: 4px solid #f85149; border-radius: 6px; padding: 1.5rem 2rem; margin-bottom: 1rem; color: #c9d1d9; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
+    .feature-card { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 1.4rem 1.6rem; }
+    .feature-card h4 { color: #58a6ff; margin-bottom: 0.5rem; font-size: 1rem; }
+    .feature-card p { color: #8b949e; font-size: 0.93rem; }
+    .pricing { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; }
+    @media(max-width: 600px) { .pricing { grid-template-columns: 1fr; } }
+    .plan { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 2rem; }
+    .plan.pro { border-color: #58a6ff; }
+    .plan h4 { font-size: 1.3rem; color: #e6edf3; margin-bottom: 0.3rem; }
+    .plan .price { font-size: 2rem; color: #58a6ff; font-weight: 700; margin-bottom: 1rem; }
+    .plan ul { list-style: none; padding: 0; }
+    .plan ul li { padding: 0.35rem 0; color: #c9d1d9; font-size: 0.95rem; }
+    .plan ul li::before { content: "- "; color: #3fb950; }
+    .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .download-card { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 1.4rem; text-align: center; }
+    .download-card h4 { color: #e6edf3; margin-bottom: 0.5rem; }
+    .download-card p { color: #8b949e; font-size: 0.85rem; margin-bottom: 1rem; }
+    footer { text-align: center; padding: 2rem; color: #484f58; font-size: 0.85rem; border-top: 1px solid #21262d; }
+    .divider { border: none; border-top: 1px solid #21262d; margin: 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>GitGrade</h1>
+  <nav>
+    <a href="#problem">Problem</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#download">Download</a>
+    <a href="https://github.com/jubair211/gitgrade">GitHub</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="badge">Built for Health Informatics Students - 1st and 2nd Semester</div>
+  <h2>Do you actually code every day?</h2>
+  <p>GitGrade automatically scans your git history and tells you the truth about your coding habits. No manual input needed.</p>
+  <a href="#download" class="btn btn-primary">Download Free</a>
+  <a href="https://github.com/jubair211/gitgrade" class="btn btn-secondary">View on GitHub</a>
+  <div class="terminal">
+    <div><span class="prompt">$</span> gitgrade habits .</div>
+    <div class="output">=== GitGrade Habits ===</div>
+    <div>Days coded this week : 5</div>
+    <div>Verdict&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Great job! You coded 5 days this week.</div>
+    <br/>
+    <div><span class="prompt">$</span> gitgrade milestones .</div>
+    <div class="output">=== GitGrade Milestones ===</div>
+    <div>Total commits&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 10</div>
+    <div>Current streak&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 3 day(s)</div>
+    <div>Milestone&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 10 commits total - keep going!</div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<section id="problem">
+  <h3>The Problem</h3>
+  <div class="problem-box">You think you studied programming for 6 hours this week. Your git history says 1 commit, on Sunday night.</div>
+  <div class="problem-box">Health Informatics students are learning to program while also studying medicine, data, and systems. It is easy to fall behind without noticing.</div>
+  <div class="problem-box">Most tools are built for experienced developers. GitGrade is built specifically for beginners in their 1st and 2nd semester.</div>
+</section>
+
+<hr class="divider"/>
+
+<section id="features">
+  <h3>What GitGrade Tracks</h3>
+  <div class="features">
+    <div class="feature-card">
+      <h4>Weekly Habits</h4>
+      <p>See exactly how many days you coded this week and whether you are building a real habit or cramming before deadlines.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Progress Tracking</h4>
+      <p>Compare your commit frequency from week 1 to now. See if you are actually improving over the semester.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Coding Patterns</h4>
+      <p>Find out when you code most and get honest advice about whether your schedule supports learning.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Beginner Milestones</h4>
+      <p>Reach 10, 50, and 100 commits. Track your streak. Get encouraging feedback at every step.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Fully Automatic</h4>
+      <p>No forms, no manual input. Just point GitGrade at your repo and it does the rest.</p>
+    </div>
+    <div class="feature-card">
+      <h4>Honest Feedback</h4>
+      <p>GitGrade tells you the truth. If you only committed on deadline day, it will say so - kindly but clearly.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<section id="pricing">
+  <h3>Pricing</h3>
+  <div class="pricing">
+    <div class="plan">
+      <h4>Free</h4>
+      <div class="price">0 EUR</div>
+      <ul>
+        <li>All 5 commands</li>
+        <li>Weekly habit tracking</li>
+        <li>Milestone detection</li>
+        <li>Coding pattern analysis</li>
+        <li>Progress since week 1</li>
+      </ul>
+      <br/>
+      <a href="#download" class="btn btn-secondary">Download Free</a>
+    </div>
+    <div class="plan pro">
+      <h4>Pro</h4>
+      <div class="price">2.99 EUR / month</div>
+      <ul>
+        <li>Everything in Free</li>
+        <li>Weekly PDF report</li>
+        <li>Semester progress export</li>
+        <li>Multi-repo scanning</li>
+        <li>Share stats with your professor</li>
+        <li>Email reminders to code today</li>
+      </ul>
+      <br/>
+      <a href="#" class="btn btn-primary">Coming Soon</a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<section id="download">
+  <h3>Download</h3>
+  <p style="color:#8b949e; margin-bottom:1.5rem;">Pre-built static binaries. No installation required - just download and run.</p>
+  <div class="download-grid">
+    <div class="download-card">
+      <h4>Linux aarch64</h4>
+      <p>For ARM-based Linux systems</p>
+      <a href="binaries/gitgrade-aarch64" class="btn btn-primary">Download</a>
+    </div>
+    <div class="download-card">
+      <h4>Linux x86_64</h4>
+      <p>For standard 64-bit Linux</p>
+      <a href="binaries/gitgrade-x86_64" class="btn btn-primary">Download</a>
+    </div>
+    <div class="download-card">
+      <h4>Build from Source</h4>
+      <p>Requires Rust and Cargo</p>
+      <a href="https://github.com/jubair211/gitgrade" class="btn btn-secondary">View on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>GitGrade - Built for Health Informatics students at TH Deggendorf | <a href="https://github.com/jubair211/gitgrade">GitHub</a></p>
+</footer>
+
+</body>
+</html>
