@@ -6,7 +6,8 @@ fn open_repo(path: &str) -> Option<Repository> {
     match Repository::open(path) {
         Ok(r) => Some(r),
         Err(_) => {
-            eprintln!("Error: not a git repository: {}", path);
+            eprintln!("Error: no git repository found in '{}'.", path);
+            eprintln!("Tip: run 'git init' first, or point gitgrade at a folder with a .git directory.");
             None
         }
     }
