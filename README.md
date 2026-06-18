@@ -79,6 +79,8 @@ Pro - 2.99 EUR lifetime
 - Multi-repo scanning
 - Share stats with professor
 - Email reminders to commit today
+- Vim undo history tracking
+- VS Code plugin
 
 ## Who Is This For
 
