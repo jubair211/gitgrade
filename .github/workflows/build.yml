@@ -1,0 +1,43 @@
+name: Build and Release
+on:
+  push:
+    branches: [ main ]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install cross
+        run: cargo install cross --git https://github.com/cross-rs/cross
+
+      - name: Build aarch64
+        run: |
+          cross build --release --target aarch64-unknown-linux-gnu
+          mkdir -p docs/binaries
+          cp target/aarch64-unknown-linux-gnu/release/gitgrade docs/binaries/gitgrade-aarch64
+
+      - name: Build x86_64
+        run: |
+          cross build --release --target x86_64-unknown-linux-gnu
+          cp target/x86_64-unknown-linux-gnu/release/gitgrade docs/binaries/gitgrade-x86_64
+
+      - name: Commit binaries
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git pull origin main
+          git add docs/binaries/
+          git diff --staged --quiet || git commit -m "update compiled binaries"
+          git push
