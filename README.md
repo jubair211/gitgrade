@@ -77,7 +77,6 @@ Pro - 2.99 EUR lifetime
 - Weekly PDF report
 - Semester progress export
 - Multi-repo scanning
-- Share stats with professor
 - Email reminders to commit today
 - Vim undo history tracking
 - VS Code plugin
