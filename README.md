@@ -74,6 +74,7 @@ Free
 - Milestone detection
 
 Pro - 2.99 EUR lifetime
+- Everything in Free
 - Weekly PDF report
 - Semester progress export
 - Multi-repo scanning
