@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
-
 mod analyzer;
+mod watcher;
 
 #[derive(Parser)]
 #[command(name = "gitgrade")]
@@ -37,16 +37,27 @@ enum Commands {
         #[arg(default_value = ".")]
         path: String,
     },
+    /// Watch a folder and log file activity
+    Watch {
+        #[arg(default_value = ".")]
+        path: String,
+    },
+    /// Compare file activity log with git commits
+    Compare {
+        #[arg(default_value = ".")]
+        path: String,
+    },
 }
 
 fn main() {
     let cli = Cli::parse();
-
     match cli.command {
         Commands::Scan { path } => analyzer::scan(&path),
         Commands::Habits { path } => analyzer::habits(&path),
         Commands::Progress { path } => analyzer::progress(&path),
         Commands::Patterns { path } => analyzer::patterns(&path),
         Commands::Milestones { path } => analyzer::milestones(&path),
+        Commands::Watch { path } => watcher::watch(&path),
+        Commands::Compare { path } => watcher::compare(&path),
     }
 }

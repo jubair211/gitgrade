@@ -1,91 +1,88 @@
 # GitGrade
 
-> Automatic coding habit tracker for 1st and 2nd semester Health Informatics students.
+Automatic coding habit tracker for 1st and 2nd semester Health Informatics students.
 
 ## The Problem
 
-Most beginner programming students don't know if they are practicing enough.
+Most beginner programming students do not know if they are practicing enough.
 They commit everything the night before a deadline and wonder why they are not improving.
-GitGrade reads your git history automatically and tells you the truth about your coding habits.
+Worse — they work for hours without committing, and their git history does not show the real effort.
+
+GitGrade reads your git history AND watches your file activity to show the full picture.
 
 ## What GitGrade Does
 
-GitGrade scans your local git repository and shows you:
+GitGrade gives you two layers of insight:
 
+**Layer 1 — Git History Analysis (automatic)**
 - How many days you coded this week
 - Whether you are a consistent learner or a deadline crammer
-- Your most active coding hour and what it means for your focus
+- Your most active coding hour
 - Your progress since your first commit
-- Beginner milestones to keep you motivated
+- Beginner milestones and streaks
 
-No manual input. No forms. Just run it and see your habits.
+**Layer 2 — File Activity Tracking (automatic)**
+- Watches your project folder for file open, modify and create events
+- Logs all activity with timestamps
+- Compares file activity with git commits
+- Shows days where you worked hard but forgot to commit
 
 ## Installation
 
 Download the binary from the website or build from source:
 
-```bash
-cargo build --release
-```
+    cargo build --release
 
 ## Usage
 
-```bash
-# Full activity scan
-gitgrade scan .
+    # Full activity scan
+    gitgrade scan .
 
-# Check your weekly coding habits
-gitgrade habits .
+    # Check your weekly coding habits
+    gitgrade habits .
 
-# See your progress since week 1
-gitgrade progress .
+    # See your progress since week 1
+    gitgrade progress .
 
-# See when you code and what it means
-gitgrade patterns .
+    # See when you code and what it means
+    gitgrade patterns .
 
-# Check your beginner milestones
-gitgrade milestones .
-```
+    # Check your beginner milestones
+    gitgrade milestones .
+
+    # Watch a folder and log file activity
+    gitgrade watch .
+
+    # Compare file activity with git commits
+    gitgrade compare .
 
 ## Example Output
 
-=== GitGrade Habits ===
-
-Days coded this week : 5
-Verdict : Great job! You coded 5 days this week.
-
-=== GitGrade Patterns ===
-
-Most active hour : 21:00
-Verdict : You code mostly at night. Try morning sessions for better focus.
-
-=== GitGrade Milestones ===
-
-Total commits : 10
-Active coding days : 8
-Current streak : 3 day(s)
-Milestone : 10 commits total - keep going!
-
+    === GitGrade Activity Compare ===
+    Date         File Events  Git Commits    Verdict
+    ------------------------------------------------------------
+    2026-06-18   47           1              You worked but did not commit!
+    2026-06-17   12           3              Good - active and committed
+    2026-06-16   0            0              Rest day
 
 ## Business Model
 
-**Free**
-- All 5 commands
-- Habit tracking
+Free
+- All 7 commands
+- Git history analysis
+- File activity tracking
 - Milestone detection
-- Coding pattern analysis
-- Progress since week 1
 
-**Pro - 2.99 EUR/month**
+Pro - 2.99 EUR lifetime
 - Weekly PDF report
 - Semester progress export
 - Multi-repo scanning
-- Share your stats with your professor
-- Email reminders to code today
+- Share stats with professor
+- Email reminders to commit today
 
 ## Who Is This For
 
-GitGrade is built specifically for 1st and 2nd semester Health Informatics students
+GitGrade is built for 1st and 2nd semester Health Informatics students
 who are learning to program and want to build consistent daily coding habits.
 
 ## Built With
@@ -94,6 +91,7 @@ who are learning to program and want to build consistent daily coding habits.
 - clap - CLI argument parsing
 - chrono - date and time handling
 - git2 - git repository access
+- notify - file system event watching
 
 ## License
 
