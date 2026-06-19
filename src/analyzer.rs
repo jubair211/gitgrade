@@ -201,3 +201,51 @@ pub fn milestones(path: &str) {
         println!("Streak bonus         : {} day streak - you are building a great habit!", streak);
     }
 }
+
+pub fn badge(path: &str) {
+    let repo = match open_repo(path) { Some(r) => r, None => return };
+    let commits = get_commits(&repo);
+
+    let total = commits.len();
+    let now = Local::now();
+
+    let mut days_active = std::collections::HashSet::new();
+    for dt in &commits {
+        days_active.insert(dt.date_naive());
+    }
+    let mut streak = 0;
+    let mut check_day = now.date_naive();
+    loop {
+        if days_active.contains(&check_day) {
+            streak += 1;
+            check_day -= chrono::Duration::days(1);
+        } else {
+            break;
+        }
+    }
+
+    let mut hours: std::collections::HashMap<u32, u32> = std::collections::HashMap::new();
+    for dt in &commits {
+        *hours.entry(dt.hour()).or_insert(0) += 1;
+    }
+    let peak_hour = hours.iter().max_by_key(|e| e.1).map(|(h, _)| *h).unwrap_or(0);
+    let time_label = if peak_hour >= 22 || peak_hour < 4 {
+        "night+coder"
+    } else if peak_hour >= 6 && peak_hour <= 12 {
+        "morning+coder"
+    } else if peak_hour >= 13 && peak_hour <= 17 {
+        "afternoon+coder"
+    } else {
+        "evening+coder"
+    };
+
+    let streak_color = if streak >= 7 { "00d4aa" } else if streak >= 3 { "6366f1" } else { "f59e0b" };
+    let commit_color = if total >= 50 { "00d4aa" } else if total >= 10 { "6366f1" } else { "f59e0b" };
+
+    println!("=== GitGrade Badge ===");
+    println!("Copy this into your GitHub profile README:\n");
+    println!("![GitGrade Streak](https://img.shields.io/badge/streak-{}%20days-{}?style=flat&logo=git&logoColor=white)", streak, streak_color);
+    println!("![GitGrade Commits](https://img.shields.io/badge/commits-{}-{}?style=flat&logo=git&logoColor=white)", total, commit_color);
+    println!("![GitGrade Style](https://img.shields.io/badge/style-{}-00d4aa?style=flat&logo=git&logoColor=white)", time_label);
+    println!("\nPaste all three lines into your GitHub profile README.md");
+}

@@ -47,6 +47,11 @@ enum Commands {
         #[arg(default_value = ".")]
         path: String,
     },
+    /// Generate a GitHub profile badge
+    Badge {
+        #[arg(default_value = ".")]
+        path: String,
+    },
 }
 
 fn main() {
@@ -59,5 +64,6 @@ fn main() {
         Commands::Milestones { path } => analyzer::milestones(&path),
         Commands::Watch { path } => watcher::watch(&path),
         Commands::Compare { path } => watcher::compare(&path),
+        Commands::Badge { path } => analyzer::badge(&path),
     }
 }
