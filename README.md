@@ -98,3 +98,9 @@ who are learning to program and want to build consistent daily coding habits.
 ## License
 
 MIT
+
+    # Generate GitHub profile badges
+    gitgrade badge .
+
+    # Generate GitHub profile badges
+    gitgrade badge .
