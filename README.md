@@ -7,7 +7,6 @@ Automatic coding habit tracker for 1st and 2nd semester Health Informatics stude
 Most beginner programming students do not know if they are practicing enough.
 They commit everything the night before a deadline and wonder why they are not improving.
 Worse — they work for hours without committing, and their git history does not show the real effort.
-
 GitGrade reads your git history AND watches your file activity to show the full picture.
 
 ## What GitGrade Does
@@ -56,6 +55,9 @@ Download the binary from the website or build from source:
     # Compare file activity with git commits
     gitgrade compare .
 
+    # Generate GitHub profile badges
+    gitgrade badge .
+
 ## Example Output
 
     === GitGrade Activity Compare ===
@@ -68,10 +70,11 @@ Download the binary from the website or build from source:
 ## Business Model
 
 Free
-- All 7 commands
+- All 8 commands
 - Git history analysis
 - File activity tracking
 - Milestone detection
+- GitHub profile badges
 
 Pro - 2.99 EUR lifetime
 - Everything in Free
@@ -98,9 +101,3 @@ who are learning to program and want to build consistent daily coding habits.
 ## License
 
 MIT
-
-    # Generate GitHub profile badges
-    gitgrade badge .
-
-    # Generate GitHub profile badges
-    gitgrade badge .
