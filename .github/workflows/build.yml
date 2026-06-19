@@ -11,40 +11,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
-
       - name: Install cross
         run: cargo install cross --git https://github.com/cross-rs/cross
-
       - name: Install zigbuild
         run: |
           pip install ziglang --break-system-packages
           cargo install cargo-zigbuild
           rustup target add x86_64-apple-darwin aarch64-apple-darwin
-
       - name: Build aarch64 Linux
         run: |
           cross build --release --target aarch64-unknown-linux-gnu
           mkdir -p docs/binaries
           cp target/aarch64-unknown-linux-gnu/release/gitgrade docs/binaries/gitgrade-aarch64
-
       - name: Build x86_64 Linux
         run: |
           cross build --release --target x86_64-unknown-linux-gnu
           cp target/x86_64-unknown-linux-gnu/release/gitgrade docs/binaries/gitgrade-x86_64
-
       - name: Build macOS x86_64
         run: |
           cargo zigbuild --release --target x86_64-apple-darwin
           cp target/x86_64-apple-darwin/release/gitgrade docs/binaries/gitgrade-macos-x86_64
-
-      - name: Build macOS aarch64 Apple Silicon
+      - name: Build macOS aarch64
         run: |
           cargo zigbuild --release --target aarch64-apple-darwin
           cp target/aarch64-apple-darwin/release/gitgrade docs/binaries/gitgrade-macos-aarch64
-
       - name: Commit binaries
         run: |
           git config user.email "action@github.com"
