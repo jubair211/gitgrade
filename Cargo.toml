@@ -3,6 +3,10 @@ name = "gitgrade"
 description = "Automatic coding habit tracker — git history + file activity"
 version = "0.1.0"
 edition = "2021"
+authors = ["Jubair <jubair211@github.com>"]
+license = "MIT"
+homepage = "https://jubair211.github.io/gitgrade"
+repository = "https://github.com/jubair211/gitgrade"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
