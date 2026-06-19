@@ -28,16 +28,16 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git pull --rebase origin main
           git add docs/binaries/
           git diff --staged --quiet || git commit -m "update linux binaries"
-          git push --force-with-lease
-
+          git push
   build-macos:
     runs-on: macos-latest
     needs: build-linux
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Add targets
@@ -57,7 +57,6 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git pull --rebase origin main
           git add docs/binaries/
           git diff --staged --quiet || git commit -m "update macos binaries"
-          git push --force-with-lease
+          git push
